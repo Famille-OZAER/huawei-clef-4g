@@ -1,2 +1,2 @@
-# plugin-huawei4g for jeedom
+# plugin-huawei_clef_4g for jeedom
 # monitoring

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from huawei_lte_api.Client import Client
 from huawei_lte_api.AuthorizedConnection import AuthorizedConnection
-from huawei_lte_api.Connection import Connection
 import huawei_lte_api
 import json
 import sys

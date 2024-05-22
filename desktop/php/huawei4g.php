@@ -2,7 +2,7 @@
 if (!isConnect('admin')) {
 	throw new Exception('{{401 - Accès non autorisé}}');
 }
-$plugin = plugin::byId('huawei4g');
+$plugin = plugin::byId('huawei_dongle');
 sendVarToJS('eqType', $plugin->getId());
 $eqLogics = eqLogic::byType($plugin->getId());
 ?>
@@ -155,5 +155,5 @@ foreach (jeedom::getConfiguration('eqLogic:category') as $key => $value) {
 		</div>
 	</div>
 </div>
-<?php include_file('desktop', 'huawei4g', 'js', 'huawei4g');?>
+<?php include_file('desktop', 'huawei_dongle', 'js', 'huawei_dongle');?>
 <?php include_file('core', 'plugin.template', 'js');?>

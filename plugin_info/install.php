@@ -18,15 +18,15 @@
 
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
-function huawei4g_install() {
+function huawei_dongle_install() {
 
 }
 
-function huawei4g_update() {
+function huawei_dongle_update() {
 
 }
 
-function huawei4g_remove() {
+function huawei_dongle_remove() {
 
 }
 
