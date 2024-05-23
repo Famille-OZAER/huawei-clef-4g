@@ -346,7 +346,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'refresh');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'refresh');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Rafraîchir', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('refresh');
@@ -358,7 +358,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'FullName');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'FullName');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Réseau mobile', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('FullName');
@@ -372,7 +372,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'refreshsms');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'refreshsms');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Rafraîchir SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('refreshsms');
@@ -384,7 +384,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'status');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'status');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Statut', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('status');
@@ -398,7 +398,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'devicename');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'devicename');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Modèle', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('devicename');
@@ -412,7 +412,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'workmode');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'workmode');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Mode', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('workmode');
@@ -426,7 +426,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'Msisdn');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'Msisdn');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Numéro', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('Msisdn');
@@ -441,7 +441,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'LocalInbox');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'LocalInbox');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('SMS Reçus', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('LocalInbox');
@@ -456,7 +456,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'LocalOutbox');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'LocalOutbox');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('SMS Envoyés', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('LocalOutbox');
@@ -469,7 +469,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'RestLocalInbox');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'LocalInbox');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('SMS restants', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('RestLocalInbox');
@@ -482,7 +482,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'Messages');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'Messages');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('Messages');
@@ -496,12 +496,12 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'reboot');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'reboot');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Redémarrer', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('reboot');
       $RouteurCmd->setType('action');
-      //$RouteurCmd->setTemplate('dashboard','huawei_dongle-btn');
+      $RouteurCmd->setTemplate('dashboard','huawei_dongle-btn');
       $RouteurCmd->setSubType('other');
       $RouteurCmd->setOrder('18');
       $RouteurCmd->save();
@@ -511,7 +511,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'sendsms');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'sendsms');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Envoyer SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('sendsms');
@@ -525,7 +525,7 @@ class huawei_dongle extends eqLogic {
     $RouteurCmd = $this->getCmd(null, 'delsms');
     if (!is_object($RouteurCmd)) {
       log::add('huawei_dongle', 'debug', 'delsms');
-      $RouteurCmd = new huawei_dongleCmd();
+      $RouteurCmd = new huaweidongleCmd();
       $RouteurCmd->setName(__('Supprimer SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('delsms');
@@ -550,7 +550,7 @@ class huawei_dongle extends eqLogic {
 
 }
 
-class huawei_dongleCmd extends cmd {
+class huaweidongleCmd extends cmd {
   /*     * *************************Attributs****************************** */
 
 
