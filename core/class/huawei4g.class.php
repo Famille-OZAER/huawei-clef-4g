@@ -17,24 +17,18 @@
  */
 
   /* * ***************************Includes********************************* */
-require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
-require_once dirname(__FILE__) . '/router.class.php';
+  require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
+  require_once dirname(__FILE__) . '/router.class.php';
 
 class huawei_dongle extends eqLogic {
   /*     * *************************Attributs****************************** */
   public static $_widgetPossibility = array('custom' => true);
-  const ERROR_SYSTEM_UNKNOWN = '100001';
-  const ERROR_SYSTEM_NO_SUPPORT = '100002';
-  const ERROR_SYSTEM_NO_RIGHTS = '100003';
-  const ERROR_SYSTEM_BUSY = '100004';
-  const ERROR_SYSTEM_PARAMETER = '100006';
-  const ERROR_SYSTEM_CSRF = '125002';
+
 
   /*     * ***********************Methode static*************************** */
   public static function dependancy_info() {
     $return = array();
     $return['progress_file'] = jeedom::getTmpFolder('huawei_dongle') . '/dependance';
-    //if (exec(system::getCmdSudo() . system::get('cmd_check') . ' -E "python3\-huawei\-lte\-api" | wc -l') >= 1) {
     if (exec(system::getCmdSudo() . ' python3 -c "import huawei_lte_api"; echo $?') == 0) {
       $return['state'] = 'ok';
     } else {
@@ -69,10 +63,7 @@ class huawei_dongle extends eqLogic {
     foreach (self::byType('huawei_dongle') as $rtr) {
       if ($rtr->getIsEnable() == 1) {
         $cmd = $rtr->getCmd(null, 'refresh');
-        if (!is_object($cmd)) {
-          continue; 
-        }
-        if($rtr->getConfiguration('frequence') == '5') {
+        if (is_object($cmd)) {
           $cmd->execCmd();
         }
       }
@@ -83,12 +74,9 @@ class huawei_dongle extends eqLogic {
     foreach (self::byType('huawei_dongle') as $rtr) {
       if ($rtr->getIsEnable() == 1) {
         $cmd = $rtr->getCmd(null, 'refresh');
-        if (!is_object($cmd)) {
-          continue; 
-        }
-        if($rtr->getConfiguration('frequence') == '15') {
+        if (is_object($cmd)) {
           $cmd->execCmd();
-        }
+        }       
       }
     }
   }
@@ -103,9 +91,6 @@ class huawei_dongle extends eqLogic {
     if ($this->getConfiguration('password') == '') {
       throw new Exception(__('Le champs Mot de passe ne peut pas être vide', __FILE__));
     }
-    if ($this->getConfiguration('frequence') == '') {
-      throw new Exception(__('Le champs fréquence ne peut pas être vide', __FILE__));
-    }
   }
 
   public function getRouteurInfo() {
@@ -117,7 +102,8 @@ class huawei_dongle extends eqLogic {
 
     // setting the router session
     $Router = new Router();
-    $Router->setIP($IPaddress);
+    $Router->$ip($IPaddress);
+    //$Router->setIP($IPaddress);
 
     // calling API
     try {
@@ -148,6 +134,7 @@ class huawei_dongle extends eqLogic {
     // setting the router session
     $Router = new Router();
     $Router->setIP($IPaddress);
+    
 
     // calling API
     try {
@@ -285,33 +272,7 @@ class huawei_dongle extends eqLogic {
     log::add('huawei_dongle', 'debug', 'Sending: '.$res);
   }
 
-  // manage API errors
-  private function errorInfo($code) {
-    switch($code) {
-      case ERROR_SYSTEM_BUSY: 
-        $e = "System busy";
-        break;
-      case ERROR_SYSTEM_CSRF: 
-        $e = "Token error";
-        break;
-      case ERROR_SYSTEM_NO_RIGHTS: 
-        $e = "You don't have rights";
-        break;
-      case ERROR_SYSTEM_NO_SUPPORT: 
-        $e = "API not supported";
-        break;
-      case ERROR_SYSTEM_PARAMETER: 
-        $e = "Wrong parameter";
-        break;
-      case ERROR_SYSTEM_UNKNOWN: 
-        $e = "Unknown API error";
-        break;	
-      default:
-        $e = "UNKNOWN ERROR";
-    }
-
-    return $e;
-  }
+ 
 
   private function cleanSMS($message) {
     $caracteres = array(
@@ -611,7 +572,6 @@ class huawei_dongleCmd extends cmd {
         log::add('huawei_dongle','debug','sendsms ' . $this->getHumanName());
         $return=$eqLogic->sendSMS($_options);
         $eqLogic->getSMSInfo();
-        $eqLogic->refreshWidget();
         return $return;
 
         break;
@@ -620,21 +580,17 @@ class huawei_dongleCmd extends cmd {
         log::add('huawei_dongle','debug','refresh ' . $this->getHumanName());
         $eqLogic->getRouteurInfo();
         $eqLogic->getSMSInfo();
-        $eqLogic->refreshWidget();
         break;
 
       case "refreshsms":
         log::add('huawei_dongle','debug','refreshsms ' . $this->getHumanName());
         $eqLogic->getSMSInfo();
-        $eqLogic->refreshWidget();
         break;
 
       case "delsms":
         log::add('huawei_dongle','debug','delsms ' . $this->getHumanName());
         $eqLogic->delSMS($_options);
-        //$eqLogic->getRouteurInfo();
         $eqLogic->getSMSInfo();
-        $eqLogic->refreshWidget();
         break;
 
 
