@@ -23,13 +23,13 @@
 
 class huawei_dongle extends eqLogic {
   /*     * *************************Attributs****************************** */
-  public static $_widgetPossibility = array('custom' => true);
+  //public static $_widgetPossibility = array('custom' => true);
 
 
   /*     * ***********************Methode static*************************** */
   public static function dependancy_info() {
     $return = array();
-    $return['progress_file'] = jeedom::getTmpFolder('huawei_dongle') . '/dependance';
+    //$return['progress_file'] = jeedom::getTmpFolder('huawei_dongle') . '/dependance';
     if (exec(system::getCmdSudo() . ' python3 -c "import huawei_lte_api"; echo $?') == 0) {
       $return['state'] = 'ok';
     } else {

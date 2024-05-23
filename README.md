@@ -1,4 +1,4 @@
-<img align="right" src="plugin_info/huawei4g_icon.png" width="150">
+<img align="right" src="plugin_info/huawei_dongle_icon.png" width="150">
 # Jeedom-Huawei_dongle
 
 Huawei_dongle
