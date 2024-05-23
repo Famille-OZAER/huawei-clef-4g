@@ -29,7 +29,7 @@ class huawei_dongle extends eqLogic {
   /*     * ***********************Methode static*************************** */
   public static function dependancy_info() {
     $return = array();
-    //$return['progress_file'] = jeedom::getTmpFolder('huawei_dongle') . '/dependance';
+    $return['progress_file'] = jeedom::getTmpFolder('huawei_dongle') . '/dependance';
     if (exec(system::getCmdSudo() . ' python3 -c "import huawei_lte_api"; echo $?') == 0) {
       $return['state'] = 'ok';
     } else {
@@ -42,7 +42,7 @@ class huawei_dongle extends eqLogic {
     log::remove(__CLASS__ . '_update');
     return array('script' => dirname(__FILE__) . '/../../resources/install.sh ' . jeedom::getTmpFolder('huawei_dongle') . '/dependance', 'log' => log::getPathToLog(__CLASS__ . '_update'));
   }
-
+/*
   public static function update($_eqLogic_id = null) {
     if ($_eqLogic_id == null) {
       $eqLogics = eqLogic::byType('huawei_dongle');
@@ -335,10 +335,10 @@ class huawei_dongle extends eqLogic {
     }
     //}
   }
-
+/*
 
   /*     * *********************Methode d'instance************************* */
-  public function preSave() {
+ /* public function preSave() {
 
   }
 
@@ -548,7 +548,7 @@ class huawei_dongle extends eqLogic {
     }
   }
 
-}
+}*/
 
 class huawei_dongleCmd extends cmd {
   /*     * *************************Attributs****************************** */
