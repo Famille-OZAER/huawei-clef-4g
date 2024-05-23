@@ -1,6 +1,6 @@
 {
 	"id" : "huawei_dongle",
-	"name" : "Huawei 4G",
+	"name" : "Huawei Dongle 4G",
 	"description" : "Plugin pour la supervision de clef 4G Huawei",
 	"licence" : "MIT",
 	"author" : "Michaël OZAER",
