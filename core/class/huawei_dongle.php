@@ -546,9 +546,9 @@ class huawei_dongle extends eqLogic {
     if (is_object($cmd)) { 
       $cmd->execCmd();
     }
-  }
+  }*/
 
-}*/
+}
 
 class huawei_dongleCmd extends cmd {
   /*     * *************************Attributs****************************** */
