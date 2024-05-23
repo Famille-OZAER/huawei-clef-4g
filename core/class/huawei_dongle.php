@@ -31,7 +31,7 @@ class huawei_dongle extends eqLogic {
     $return = array();
     $return['progress_file'] = jeedom::getTmpFolder('huawei_dongle') . '/dependance';
     if (exec(system::getCmdSudo() . ' python3 -c "import huawei_lte_api"; echo $?') == 0) {
-      $return['state'] = 'ok';
+      $return['state'] = 'nok';
     } else {
       $return['state'] = 'nok';
     }
