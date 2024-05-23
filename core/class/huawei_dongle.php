@@ -20,7 +20,7 @@
   require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
   require_once dirname(__FILE__) . '/router.class.php';
 
-  
+
 class huawei_dongle extends eqLogic {
   /*     * *************************Attributs****************************** */
   public static $_widgetPossibility = array('custom' => true);
@@ -561,7 +561,7 @@ class huawei_dongleCmd extends cmd {
 
 
   public function execute($_options = null) {
-    $eqLogic = $this->getEqLogic();
+    /*$eqLogic = $this->getEqLogic();
     switch ($this->getLogicalId()) {
       case "reboot":
         log::add('huawei_dongle','debug','reboot ' . $this->getHumanName());
@@ -597,7 +597,7 @@ class huawei_dongleCmd extends cmd {
 
     }
     ;
-    return true;
+    return true;*/
   }
 
   /*     * **********************Getteur Setteur*************************** */
