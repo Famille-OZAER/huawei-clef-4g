@@ -4,9 +4,13 @@
 	"description" : "Plugin pour la supervision de clef 4G Huawei",
 	"licence" : "MIT",
 	"author" : "Michaël OZAER",
-	"require" : "4.4",
+	"require" : "4.0",
 	"category" : "monitoring",
 	"hasDependency" : true,
 	"changelog" : "https://tux1c0.github.io/plugin-huawei_dongle/#language#/",
-	"documentation" : "https://tux1c0.github.io/plugin-huawei_dongle/#language#/"
+	"documentation" : "https://tux1c0.github.io/plugin-huawei_dongle/#language#/",
+	"compatibility": [
+        "rpi",
+        "V4"
+    ]
 }
