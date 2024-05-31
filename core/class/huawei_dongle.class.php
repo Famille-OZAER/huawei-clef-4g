@@ -47,7 +47,7 @@ class huawei_dongle extends eqLogic {
     $return = array();
     $return['log'] = 'huawei_dongle';
     $return['state'] = 'nok';
-    $pid_file = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle1.pid';
+    $pid_file = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle.pid';
     if (file_exists($pid_file)) {
 
       if (@posix_getsid(trim(file_get_contents($pid_file)))) {
@@ -56,15 +56,7 @@ class huawei_dongle extends eqLogic {
         shell_exec(system::getCmdSudo() . 'rm -rf ' . $pid_file . ' 2>&1 > /dev/null;rm -rf ' . $pid_file . ' 2>&1 > /dev/null;');
       }
     }
-    $pid_file2 = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle2.pid';
-    if (file_exists($pid_file2)) {
-
-      if (@posix_getsid(trim(file_get_contents($pid_file2)))) {
-        $return['state'] = 'ok';
-      } else {
-        shell_exec(system::getCmdSudo() . 'rm -rf ' . $pid_file2 . ' 2>&1 > /dev/null;rm -rf ' . $pid_file2 . ' 2>&1 > /dev/null;');
-      }
-    }
+    
     $return['launchable'] = 'ok';
     return $return;
   }
@@ -78,7 +70,7 @@ class huawei_dongle extends eqLogic {
   }
 
   public static function deamon_stop() {
-    $pid_file = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle1.pid';
+    $pid_file = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle.pid';
     if (file_exists($pid_file)) {
       $pid = intval(trim(file_get_contents($pid_file)));
       system::kill($pid);
@@ -144,18 +136,18 @@ class huawei_dongle extends eqLogic {
 		return $ping;
 		}
   
-  public function getAllInfo(){
-    if ($this->ping($this->getConfiguration('ip'))=="NOK"){
-      $this->infos["status"]="Down";
-      $this->updateInfo();
+  public static function getAllInfo($eqlogic){
+    if ($eqlogic->ping($eqlogic->getConfiguration('ip'))=="NOK"){
+      $eqlogic->infos["status"]="Down";
+      $eqlogic->updateInfo();
       return;
    }
   
-   $IPaddress = $this->getConfiguration('ip');
-   $login = $this->getConfiguration('username');
-   $pwd = $this->getConfiguration('password');
+   $IPaddress = $eqlogic->getConfiguration('ip');
+   $login = $eqlogic->getConfiguration('username');
+   $pwd = $eqlogic->getConfiguration('password');
 
-   $this->infos = array();
+   $eqlogic->infos = array();
 
     // setting the huawei_dongleRouter session
     $huawei_dongleRouter = new huawei_dongleRouter();
@@ -165,19 +157,19 @@ class huawei_dongle extends eqLogic {
     // calling API
     try {
       $huawei_dongleRouter->setSession($login, $pwd, "all");
-      $this->infos['status'] = $huawei_dongleRouter->getStatus();
+      $eqlogic->infos['status'] = $huawei_dongleRouter->getStatus();
 
-      if($this->infos['status'] == "Up") {
-        $this->setInfo($huawei_dongleRouter->getPublicLandMobileNetwork());
-        $this->setInfo($huawei_dongleRouter->getCellInfo());
-        $this->setInfo($huawei_dongleRouter->getSMS());
-        $this->setInfo($huawei_dongleRouter->getSMSCount());
+      if($eqlogic->infos['status'] == "Up") {
+        $eqlogic->setInfo($huawei_dongleRouter->getPublicLandMobileNetwork());
+        $eqlogic->setInfo($huawei_dongleRouter->getCellInfo());
+        $eqlogic->setInfo($huawei_dongleRouter->getSMS());
+        $eqlogic->setInfo($huawei_dongleRouter->getSMSCount());
       }
     } catch (Exception $e) {
        huawei_dongle::add_log( 'error', $e);
     }
 
-    $this->updateInfo();
+    $eqlogic->updateInfo();
   }
 
   public function getRouteurIngetSMSInfofo() {
@@ -736,7 +728,7 @@ class huawei_dongleCmd extends cmd {
       case "refresh":
          huawei_dongle::add_log('debug','refresh ' . $this->getHumanName());
        
-        $eqLogic->getAllInfo();
+        $eqLogic->getAllInfo($eqLogic);
         break;
 
       case "refreshsms":
