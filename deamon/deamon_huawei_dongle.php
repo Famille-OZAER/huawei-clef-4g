@@ -30,7 +30,7 @@ function deamon1(){
         if(!$eqLogic->getIsEnable()){
             continue;
         }
-        huawei_dongle::getAllInfo();
+        huawei_dongle->getAllInfo();
         sleep(60);
         }
     }   
@@ -50,7 +50,7 @@ function deamon2(){
         if(!$eqLogic->getIsEnable()){
             continue;
         }
-        huawei_dongle::getSMSInfo();
+        huawei_dongle->getSMSInfo();
         sleep(10);
         }
     }   
