@@ -1,0 +1,302 @@
+<div class="eqLogic eqLogic-widget allowResize allowReorderCmd #custom_layout# #class#" data-eqType="#eqType#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#" data-version="#version#" data-translate-category="#translate_category#" data-category="#category#"
+    data-tags="#tags#">
+
+    <center class="object_name" style="overflow: hidden;padding-right:22px;padding-left:12px;font-weight:300;word-break: break-all;max-height:45px;font-size:16px;background-color: rgba(0,0,0,0.6);font-family:Arial;font-weight:normal;">
+        <a href="#eqLink#" class="reportModeHidden">#object_name#</a>
+    </center>
+    <center class="widget-name" style="margin-bottom: 0px;max-height:22px;">
+        <a href="#eqLink#" class="reportModeHidden">#name_display#</a>
+    </center>
+
+    
+
+        <div class = "tuile" style="height:100%">
+            <div class = "center" style="height:100%;padding-top: 10px;margin: 0px">
+                <div class = "réseau_mobile">
+                </div> 
+                <div class="status cmd" style="float:left; clear:both;" data-type="info" data-cmd_id="#statusid#" data-eqLogic_id="#eqLogic_id#">
+                    <div class="content-xs">
+                        <span class="icon jeedom-off cmdName"> Statut</span>
+                        <strong class="state">#status#</strong>
+                    </div>
+                    
+                </div>
+                                      
+               
+              
+                <div class="modèle cmd" style="float:left; clear:both;" data-type="info" data-subtype="string"  data-cmd_id="#modèleid#">
+                    <div class="content-xs">
+                        <span class="fab fa-linux"> Modèle</span>
+                        <strong class="state">#modèle#</strong>
+                    </div>
+                  
+                </div>
+                <div class="mode cmd" style="float:left; clear:both;" data-type="info" data-subtype="string" data-cmd_id="#modeid#">
+                    <div class="content-xs">
+                        <span class="icon jeedom2-fdp1-signal5"> Mode</span>
+                        <strong class="state">#mode#</strong>
+                    </div>
+                    
+                </div>
+                <div class="numéro cmd" style="float:left; clear:both;" data-type="info" data-subtype="string" data-cmd_id="#numéroid#">
+                    <div class="content-xs">
+                        <span class="icon jeedom2-fdp1-signal5"> Numéro de téléphone</span>
+                        <strong class="state">#numéro#</strong>
+                    </div>
+                    
+                </div>
+                <div class = "sms">
+                    <div class="reçu cmd" style="float:left; clear:both;" data-type="info" data-subtype="string"  data-cmd_id="#reçuid#">
+                        <div class="content-xs">
+                           <span class=""><i class="fas fa-mobile"></i> Nombre SMS reçus</span>
+                            <strong class="state">#reçu#</strong>
+                        </div>
+                        
+                    </div>
+                    <div class="envoyé cmd" style="float:left; clear:both;" data-type="info" data-subtype="string" data-template="default" data-cmd_id="#envoyéid#">
+                        <div class="content-xs">
+                            <span class="" ><i class="fas fa-mobile"></i> Nombre SMS envoyés</span>
+                            <strong class="state">#envoyé#</strong>
+                        </div>
+                        
+                    </div>
+                    <div class="restants cmd" style="float:left; clear:both;" data-type="info" data-subtype="string" data-template="default" data-cmd_id="#restantsid#">
+                        <div class="content-xs">
+                           <span class=""><i class="fas fa-mobile"></i> Nombre SMS restant</span>
+                            <strong class="state">#restants#</strong>
+                        </div>
+                    </div>
+                    <div class="reçu_txt cmd" style="float:left; clear:both;" data-type="info" data-subtype="string" data-template="default" data-cmd_id="#reçu_txtid#">
+                        <div class="content-xs">
+                            <span class=""><i class="fas fa-mobile"></i> SMS reçus</span>
+                        </div>
+                        <section id="Wrapper" style="display: flex; height: 120px; width:200px;">
+                                <div class="Slider" style="height: 120px; overflow: hidden;">
+                                    #reçu_txt#
+                                </div>	
+                           
+                        </section>
+                        <div class="content-xs">
+                            <span class="Prev" style="cursor: pointer!important; height: 15px; padding: 1px; transition: background-color .5s, color .5s;"><i class="fas fa-chevron-left" ></i> Précédent</span>
+                            <span class="Supprimer_sms" style="cursor: pointer!important; height: 15px; padding: 1px; transition: background-color .5s, color .5s;"><i class="icon maison-poubelle" ></i> Supprimer SMS</span>
+                           
+                            <span class="Next" style="cursor: pointer!important; height: 15px; padding: 1px; transition: background-color .5s, color .5s;">Suivant <i class="fas fa-chevron-right" ></i></span>
+                        </div>
+                    </div>
+                    <div class="envoi cmd" style="float:left; clear:both;" data-type="action" data-subtype="message" data-template="default" data-cmd_id="#envoiid#">
+                        <div style="float:left; clear:both;">
+                           <span class=""><i class="fas fa-mobile"></i> Envoi de SMS</span>
+                        </div>
+                        <div style="margin-left: 5px;">
+                            <input class="form-control input-sm numerotel" placeholder="Numéro"/>
+                            <textarea class="form-control input-sm message" rows="2"  data-cmd_id="#envoiid#"></textarea>
+                            <a class='btn btn-xs envoi_sms'>Envoyer SMS</a>
+                        </div>
+                       
+                    </div>
+                    <div class="supprimer cmd" style="float:left; clear:both;" data-type="action" data-subtype="other" data-template="default" data-cmd_id="#supprimerid#" >
+                        <div style="margin-left: 5px;">
+                           <a class='btn btn-xs Supprimer_tous_sms'>Supprimer tous les SMS</a>
+                        </div>
+                       
+                    </div>
+                    <div class="reboot cmd" style="float:left; clear:both;" data-type="action" data-subtype="other" data-template="default" data-cmd_id="#rebootid#" >
+                        <div style="margin-left: 5px;">
+                           <a class='btn btn-xs Reboot'>Redemarrer</a>
+                        </div>
+                       
+                    </div>
+                </div>
+
+                
+            </div>
+
+       
+            <span class="cmd refresh pull-right cursor" style="position: absolute;right: 0px;top:0px" data-cmd_id="#refresh_id#">
+                <i class="fas fa-sync"></i>
+            </span>
+            
+
+
+        </div>
+   
+        <script>
+         
+            //status
+            
+            jeedom.cmd.addUpdateFunction('#statusid#', function(_options) {                
+                document.querySelector('.cmd[data-cmd_id="#statusid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+                document.querySelector('.cmd[data-cmd_id="#statusid#"]').querySelector('.state').innerHTML = _options.display_value
+            })
+            //modèle
+            jeedom.cmd.addUpdateFunction('#modèleid#', function(_options) {
+                document.querySelector('.cmd[data-cmd_id="#modèleid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+                document.querySelector('.cmd[data-cmd_id="#modèleid#"]').querySelector('.state').innerHTML = _options.display_value
+        
+            }) 
+            //mode
+            jeedom.cmd.addUpdateFunction('#modeid#', function(_options) {
+                document.querySelector('.cmd[data-cmd_id="#modeid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+                document.querySelector('.cmd[data-cmd_id="#modeid#"]').querySelector('.state').innerHTML = _options.display_value
+        
+            }) 
+            //numero
+            jeedom.cmd.addUpdateFunction('#numéroid#', function(_options) {
+                document.querySelector('.cmd[data-cmd_id="#numéroid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+                document.querySelector('.cmd[data-cmd_id="#numéroid#"]').querySelector('.state').innerHTML = _options.display_value
+        
+            })
+            //nombre sms reçus
+            jeedom.cmd.addUpdateFunction('#reçuid#', function(_options) {
+                document.querySelector('.cmd[data-cmd_id="#reçuid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+                document.querySelector('.cmd[data-cmd_id="#reçuid#"]').querySelector('.state').innerHTML = _options.display_value
+        
+            }) 
+            //nombre sms envoyés
+            jeedom.cmd.addUpdateFunction('#envoyéid#', function(_options) {
+                document.querySelector('.cmd[data-cmd_id="#envoyéid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+                document.querySelector('.cmd[data-cmd_id="#envoyéid#"]').querySelector('.state').innerHTML = _options.display_value
+        
+            })
+            //nombre sms restants
+            jeedom.cmd.addUpdateFunction('#restantsid#', function(_options) {
+                document.querySelector('.cmd[data-cmd_id="#restantsid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+                document.querySelector('.cmd[data-cmd_id="#restantsid#"]').querySelector('.state').innerHTML = _options.display_value
+        
+            })
+            //sms reçus txt
+           
+            document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Next').click(function(){
+                document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider").append( document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider textarea:first-of-type"));
+            })
+           
+            document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Prev').click(function(){
+                document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider").prepend( document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider textarea:last-of-type"));
+            })
+           
+            jeedom.cmd.addUpdateFunction('#reçu_txtid#', function(_options) {
+                document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').setAttribute('title', 'Date de valeur : '+_options.valueDate+'<br/>Date de collecte : '+_options.collectDate);
+               
+                var txtArea=''
+                if(_options.display_value) {
+                    var arrayJSON = JSON.parse(_options.display_value);
+                try {
+                    document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Slider').empty()
+                    for (var i = 0; i < arrayJSON.length; i++) {
+                        var SMS = arrayJSON[i];
+                        var StatutSMS;
+                        if(SMS.Smstat == '0') {
+                            StatutSMS = "Reçu";
+                        }else{
+                            StatutSMS = "Envoyé";
+                        }
+                        txtArea += '<textarea readonly=true class="input-sm message" style="height: 120px;" sms-id="'+SMS.Index+'">Statut : '+StatutSMS+'&#10;Tel : '+SMS.Phone+'&#10;Date : '+SMS.Date+'&#10;'+SMS.Content+' </textarea>';
+                        
+                        document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Slider').innerHTML=txtArea;
+                    }
+                    if (txtArea == ''){
+                        document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Slider').innerHTML='<textarea readonly=true class="input-sm message" style="height: 120px;" sms-id="null"</textarea>';
+                    }
+                    if (document.querySelectorAll('.cmd[data-cmd_id="#reçu_txtid#"] .Slider textarea').length >1){
+                        console.log('+')
+                        document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Prev').seen()
+                        document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Next').seen()
+                    }else{
+                            console.log('-')
+                            document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Prev').unseen()
+                            document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Next').unseen()
+                    }
+                    if (document.querySelectorAll('.cmd[data-cmd_id="#reçu_txtid#"] .Slider textarea')[0].innerHTML ==''){
+                        document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Supprimer_sms').unseen()
+                    }else{
+                        document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Supprimer_sms').seen() 
+                    }    
+                } catch (e) { }
+            
+            }
+            
+            })
+            document.querySelector('.eqLogic[data-eqLogic_uid=#uid#] .tuile').addEventListener('click', function(event) {
+                var _target = null
+                if (_target = event.target.closest('.Prev')) {
+                 
+                    document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider").prepend( document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider textarea:last-of-type"));
+                }
+                if (_target = event.target.closest('.Next')) {
+                   
+                    document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider").append( document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"]').querySelector(".Slider textarea:first-of-type"));
+                }
+                if (_target = event.target.closest('.refresh')) {
+                    jeedom.cmd.execute({
+                        id: '#refresh_id#'
+                    });
+                } 
+                if (_target = event.target.closest('.Reboot')) {
+                    jeedom.cmd.execute({
+                        id: '#rebootid#'
+                    });
+                }
+                if (_target = event.target.closest('.envoi_sms')) {
+                     jeedom.cmd.execute({
+                        id: '#envoiid#', 
+                        value: {
+                            numerotel: document.querySelector('.cmd[data-cmd_id="#envoiid#"] .numerotel').value, 
+                            message: document.querySelector('.cmd[data-cmd_id="#envoiid#"] .message').value}
+                        });
+                        document.querySelector('.cmd[data-cmd_id="#envoiid#"] .numerotel').value=""
+                        document.querySelector('.cmd[data-cmd_id="#envoiid#"] .message').value=""
+          
+                    };
+                if (_target = event.target.closest('.Supprimer_sms')) {
+                    if (document.querySelector('.Slider textarea:first-child').getAttribute('sms-id') == 'null'){
+                        return
+                    }
+                      
+                     jeedom.cmd.execute({
+                        id: '#supprimerid#', 
+                        value: {smsid: 
+                            document.querySelector('.Slider textarea:first-child').getAttribute('sms-id')
+                        }
+                    });
+                    setTimeout(2000)
+                    jeedom.cmd.execute({
+                        id: '#refreshsmsid#',                       
+                    })
+                }
+                if (_target = event.target.closest('.Supprimer_tous_sms')) {
+                    
+                    document.querySelectorAll('.Slider textarea').forEach(_el => {
+                        if (document.querySelector('.Slider textarea:first-child').getAttribute('sms-id') == 'null'){
+                        return
+                    }                    
+                        jeedom.cmd.execute({
+                            id: '#supprimerid#', 
+                            value: {smsid: _el.getAttribute('sms-id')}
+                        })                      
+                    })
+                    setTimeout(2000)
+                    jeedom.cmd.execute({
+                        id: '#refreshsmsid#',                       
+                    })
+                        
+                    
+                }
+            })
+                           
+            if (document.querySelectorAll('.cmd[data-cmd_id="#reçu_txtid#"] .Slider textarea').length >1){
+                    console.log('+')
+                    document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Prev').seen()
+                    document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Next').seen()
+            }else{
+                    console.log('-')
+                    document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Prev').unseen()
+                    document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Next').unseen()
+            }
+            if (document.querySelectorAll('.cmd[data-cmd_id="#reçu_txtid#"] .Slider textarea')[0].innerHTML ==''){
+                document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Supprimer_sms').unseen()
+            }else{
+                document.querySelector('.cmd[data-cmd_id="#reçu_txtid#"] .Supprimer_sms').seen() 
+            }     
+        </script>
+
+</div>

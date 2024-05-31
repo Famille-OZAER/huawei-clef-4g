@@ -43,7 +43,61 @@ class huawei_dongle extends eqLogic {
     log::remove(__CLASS__ . '_update');
     return array('script' => dirname(__FILE__) . '/../../resources/install.sh ' . jeedom::getTmpFolder('huawei_dongle') . '/dependance', 'log' => log::getPathToLog(__CLASS__ . '_update'));
   }
+  public static function deamon_info() {
+    $return = array();
+    $return['log'] = 'huawei_dongle';
+    $return['state'] = 'nok';
+    $pid_file = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle1.pid';
+    if (file_exists($pid_file)) {
 
+      if (@posix_getsid(trim(file_get_contents($pid_file)))) {
+        $return['state'] = 'ok';
+      } else {
+        shell_exec(system::getCmdSudo() . 'rm -rf ' . $pid_file . ' 2>&1 > /dev/null;rm -rf ' . $pid_file . ' 2>&1 > /dev/null;');
+      }
+    }
+    $pid_file2 = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle2.pid';
+    if (file_exists($pid_file2)) {
+
+      if (@posix_getsid(trim(file_get_contents($pid_file2)))) {
+        $return['state'] = 'ok';
+      } else {
+        shell_exec(system::getCmdSudo() . 'rm -rf ' . $pid_file2 . ' 2>&1 > /dev/null;rm -rf ' . $pid_file2 . ' 2>&1 > /dev/null;');
+      }
+    }
+    $return['launchable'] = 'ok';
+    return $return;
+  }
+
+  public static function deamon_start() {
+    self::deamon_stop();
+    self::deamon_info();
+    $cmd = 'sudo /usr/bin/php ' . realpath(dirname(__FILE__) . '/../..') . '/deamon/deamon_huawei_dongle.php start';
+    exec($cmd . ' >> ' . log::getPathToLog('huawei_dongle') . ' 2>&1 &');
+    return true;
+  }
+
+  public static function deamon_stop() {
+    $pid_file = jeedom::getTmpFolder('huawei_dongle') . '/deamon_huawei_dongle1.pid';
+    if (file_exists($pid_file)) {
+      $pid = intval(trim(file_get_contents($pid_file)));
+      system::kill($pid);
+    }
+    system::kill('deamon_huawei_dongle.php');
+  }
+  static function add_log($level = 'debug',$Log,$eqLogic=null){
+    if (is_array($Log)) $Log = json_encode($Log);
+    if(count(debug_backtrace(false, 2)) == 1){
+      $function_name = debug_backtrace(false, 2)[0]['function'];
+      $ligne = debug_backtrace(false, 2)[0]['line'];
+    }else{
+      $function_name = debug_backtrace(false, 2)[1]['function'];
+      $ligne = debug_backtrace(false, 2)[0]['line'];
+    }
+    $msg =  $function_name .' (' . $ligne . '): '.$Log;
+   
+     log::add(__CLASS__  , $level,$msg);
+    }
   public static function update($_eqLogic_id = null) {
     if ($_eqLogic_id == null) {
       $eqLogics = eqLogic::byType('huawei_dongle');
@@ -56,7 +110,7 @@ class huawei_dongle extends eqLogic {
         $rtr->getRouteurInfo();
         $rtr->getSMSInfo();
       } catch (Exception $e) {
-        log::add('huawei_dongle', 'error', $e->getMessage());
+        huawei_dongle::add_log( 'error', $e->getMessage());
       }
     }
   }
@@ -120,13 +174,13 @@ class huawei_dongle extends eqLogic {
         $this->setInfo($huawei_dongleRouter->getSMSCount());
       }
     } catch (Exception $e) {
-      log::add('huawei_dongle', 'error', $e);
+       huawei_dongle::add_log( 'error', $e);
     }
 
     $this->updateInfo();
   }
 
-  public function getRouteurInfo() {
+  public function getRouteurIngetSMSInfofo() {
     // getting configuration
     if ($this->ping($this->getConfiguration('ip'))=="NOK"){
        $this->infos["status"]="Down";
@@ -153,7 +207,7 @@ class huawei_dongle extends eqLogic {
 
       }
     } catch (Exception $e) {
-      log::add('huawei_dongle', 'error', $e);
+       huawei_dongle::add_log( 'error', $e);
     }
 
     $this->updateInfo();
@@ -188,7 +242,7 @@ class huawei_dongle extends eqLogic {
         $this->setInfo($huawei_dongleRouter->getSMSCount());
       }
     } catch (Exception $e) {
-      log::add('huawei_dongle', 'error', $e);
+       huawei_dongle::add_log( 'error', $e);
     }
 
     $this->updateInfo();
@@ -228,7 +282,7 @@ class huawei_dongle extends eqLogic {
       }
 
     } else {
-      log::add('huawei_dongle', 'debug', 'function  has a NULL parameter');
+       huawei_dongle::add_log( 'debug', 'function  has a NULL parameter');
     }
   }
 
@@ -237,17 +291,19 @@ class huawei_dongle extends eqLogic {
     $IPaddress = $this->getConfiguration('ip');
     $login = $this->getConfiguration('username');
     $pwd = $this->getConfiguration('password');
-
+    $RouteurCmd = $this->getCmd(null, 'status');
+    $RouteurCmd->event("Down");
     // setting the huawei_dongleRouter session
+    $huawei_dongleRouter = new huawei_dongleRouter();
     $huawei_dongleRouter->setIP($IPaddress);
     try {
       $huawei_dongleRouter->setSession($login, $pwd, "");
       $res = $huawei_dongleRouter->setReboot();
     } catch (Exception $e) {
-      log::add('huawei_dongle', 'error', $e);
+       huawei_dongle::add_log( 'error', $e);
     }
 
-    log::add('huawei_dongle', 'debug', 'Rebooting: '.$res);
+     huawei_dongle::add_log( 'debug', 'Rebooting: '.$res);
   }
 
   public function sendSMS($arr) {
@@ -275,18 +331,18 @@ class huawei_dongle extends eqLogic {
         $numero_tel=$arr['title'];
 
       }
-      log::add('huawei_dongle', 'debug', 'numerotel: '. $numero_tel);
-      log::add('huawei_dongle', 'debug', 'message: '.$messageSMS);
+       huawei_dongle::add_log( 'debug', 'numerotel: '. $numero_tel);
+       huawei_dongle::add_log( 'debug', 'message: '.$messageSMS);
       if(empty($arr['numerotel'])) {
         $res = json_decode($huawei_dongleRouter->sendSMS($arr['title'], $messageSMS));
       } else {
         $res = json_decode($huawei_dongleRouter->sendSMS($arr['numerotel'], $messageSMS));
       }
     } catch (Exception $e) {
-      log::add('huawei_dongle', 'error', $e);
+       huawei_dongle::add_log( 'error', $e);
     }
-    //log::add('huawei_dongle', 'debug', 'Message: '.$res->message);
-    log::add('huawei_dongle', 'debug', 'Retour: '.$res->retour);
+    // huawei_dongle::add_log( 'debug', 'Message: '.$res->message);
+     huawei_dongle::add_log( 'debug', 'Retour: '.$res->retour);
     return $res->retour;
   }
 
@@ -301,17 +357,17 @@ class huawei_dongle extends eqLogic {
     $huawei_dongleRouter->setIP($IPaddress);
     try {
       $huawei_dongleRouter->setSession($login, $pwd, "");
-      log::add('huawei_dongle', 'debug', 'smsid: '.$arr['smsid']);
+       huawei_dongle::add_log( 'debug', 'smsid: '.$arr['smsid']);
       if(empty($arr['smsid'])) {
-        log::add('huawei_dongle', 'debug', 'smsid empty');
+         huawei_dongle::add_log( 'debug', 'smsid empty');
       } else {
         $res = $huawei_dongleRouter->delSMS($arr['smsid']);
       }
     } catch (Exception $e) {
-      log::add('huawei_dongle', 'error', $e);
+       huawei_dongle::add_log( 'error', $e);
     }
 
-    log::add('huawei_dongle', 'debug', 'Sending: '.$res);
+     huawei_dongle::add_log( 'debug', 'Sending: '.$res);
   }
 
  
@@ -337,7 +393,7 @@ class huawei_dongle extends eqLogic {
 
     try {
       foreach($this->infos as $cle=>$valeur){
-        //log::add('huawei_dongle', 'debug', $cle . ': valeur '.$valeur);
+        // huawei_dongle::add_log( 'debug', $cle . ': valeur '.$valeur);
 
         $value = $this->infos[$cle];
         if($cle == "Messages"){
@@ -351,8 +407,12 @@ class huawei_dongle extends eqLogic {
         $cmd=cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), $cle);
         if (is_object($cmd)){
 
+          
+          if($cmd->execCmd()!=$value && $value !=''){
+
+             huawei_dongle::add_log( 'info', 'MAJ '.$cle . ': '.$value);
+          }
           $this->checkAndUpdateCmd($cmd, $value);
-          log::add('huawei_dongle', 'debug', 'MAJ '.$cle . ': '.$value);
         }
 
 
@@ -363,16 +423,20 @@ class huawei_dongle extends eqLogic {
         $nombre_actuel= $nombre_actuel + $this->infos["LocalOutbox"];
         $nombre_actuel= $nombre_actuel + $this->infos["LocalInbox"];
         $nombre_max= $this->infos["LocalMax"];
-		$restants=intval($nombre_max-$nombre_actuel);
+		    $restants=intval($nombre_max-$nombre_actuel);
         $cmd=cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), "RestLocalInbox");
         if (is_object($cmd)){
-          $this->checkAndUpdateCmd($cmd, $restants);
-          log::add('huawei_dongle', 'debug', 'MAJ RestLocalInbox: '.$restants);
+         
+          if($cmd->execCmd()!=$restants){
+             huawei_dongle::add_log( 'info', 'MAJ RestLocalInbox: '.$restants);
+           
+          }
+           $this->checkAndUpdateCmd($cmd, $restants);
         }
 
       }
     } catch (Exception $e) {
-      log::add('huawei_dongle', 'error', 'Impossible de mettre à jour le champs '.$key);
+       huawei_dongle::add_log( 'error', 'Impossible de mettre à jour le champs '.$key);
     }
     //}
   }
@@ -386,7 +450,7 @@ class huawei_dongle extends eqLogic {
   public function postSave() {
     $RouteurCmd = $this->getCmd(null, 'refresh');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'refresh');
+       huawei_dongle::add_log( 'debug', 'refresh');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Rafraîchir', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
@@ -398,13 +462,12 @@ class huawei_dongle extends eqLogic {
     }
     $RouteurCmd = $this->getCmd(null, 'FullName');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'FullName');
+       huawei_dongle::add_log( 'debug', 'FullName');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Réseau mobile', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('FullName');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-antenna');
       $RouteurCmd->setSubType('string');
       $RouteurCmd->setOrder('2');
       $RouteurCmd->save();
@@ -412,7 +475,7 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'refreshsms');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'refreshsms');
+       huawei_dongle::add_log( 'debug', 'refreshsms');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Rafraîchir SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
@@ -424,13 +487,12 @@ class huawei_dongle extends eqLogic {
     }
     $RouteurCmd = $this->getCmd(null, 'status');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'status');
+       huawei_dongle::add_log( 'debug', 'status');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Statut', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('status');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-power');
       $RouteurCmd->setSubType('string');
       $RouteurCmd->setOrder('4');
       $RouteurCmd->save();
@@ -438,13 +500,12 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'devicename');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'devicename');
+       huawei_dongle::add_log( 'debug', 'devicename');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Modèle', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('devicename');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-linux');
       $RouteurCmd->setSubType('string');
       $RouteurCmd->setOrder('5');
       $RouteurCmd->save();
@@ -452,13 +513,12 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'workmode');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'workmode');
+       huawei_dongle::add_log( 'debug', 'workmode');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Mode', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('workmode');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-antenna');
       $RouteurCmd->setSubType('string');
       $RouteurCmd->setOrder('9');
       $RouteurCmd->save();
@@ -466,13 +526,12 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'Msisdn');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'Msisdn');
+       huawei_dongle::add_log( 'debug', 'Msisdn');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Numéro', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('Msisdn');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-antenna');
       $RouteurCmd->setSubType('string');
       $RouteurCmd->setOrder('11');
       $RouteurCmd->save();
@@ -481,13 +540,12 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'LocalInbox');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'LocalInbox');
+       huawei_dongle::add_log( 'debug', 'LocalInbox');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('SMS Reçus', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('LocalInbox');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-sms');
       $RouteurCmd->setSubType('numeric');
       $RouteurCmd->setOrder('14');
       $RouteurCmd->save();
@@ -496,39 +554,36 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'LocalOutbox');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'LocalOutbox');
+       huawei_dongle::add_log( 'debug', 'LocalOutbox');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('SMS Envoyés', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('LocalOutbox');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-sms');
       $RouteurCmd->setSubType('numeric');
       $RouteurCmd->setOrder('15');
       $RouteurCmd->save();
     }
     $RouteurCmd = $this->getCmd(null, 'RestLocalInbox');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'LocalInbox');
+       huawei_dongle::add_log( 'debug', 'LocalInbox');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('SMS restants', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('RestLocalInbox');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-sms');
       $RouteurCmd->setSubType('numeric');
       $RouteurCmd->setOrder('16');
       $RouteurCmd->save();
     }
     $RouteurCmd = $this->getCmd(null, 'Messages');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'Messages');
+       huawei_dongle::add_log( 'debug', 'Messages');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('Messages');
       $RouteurCmd->setType('info');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-smstxt');
       $RouteurCmd->setSubType('string');
       $RouteurCmd->setOrder('17');
       $RouteurCmd->save();
@@ -536,13 +591,12 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'reboot');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'reboot');
+       huawei_dongle::add_log( 'debug', 'reboot');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Redémarrer', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('reboot');
       $RouteurCmd->setType('action');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-btn');
       $RouteurCmd->setSubType('other');
       $RouteurCmd->setOrder('18');
       $RouteurCmd->save();
@@ -551,27 +605,25 @@ class huawei_dongle extends eqLogic {
 
     $RouteurCmd = $this->getCmd(null, 'sendsms');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'sendsms');
+       huawei_dongle::add_log( 'debug', 'sendsms');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Envoyer SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('sendsms');
       $RouteurCmd->setType('action');
       $RouteurCmd->setTemplate('dashboard','huawei_dongle-sendsms');
-      $RouteurCmd->setSubType('message');
       $RouteurCmd->setOrder('21');
       $RouteurCmd->save();
     }
 
     $RouteurCmd = $this->getCmd(null, 'delsms');
     if (!is_object($RouteurCmd)) {
-      log::add('huawei_dongle', 'debug', 'delsms');
+       huawei_dongle::add_log( 'debug', 'delsms');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('Supprimer SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('delsms');
       $RouteurCmd->setType('action');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-delsms');
       $RouteurCmd->setSubType('other');
       $RouteurCmd->setOrder('22');
       $RouteurCmd->save();
@@ -588,7 +640,70 @@ class huawei_dongle extends eqLogic {
       $cmd->execCmd();
     }
   }
+  function toHtml($_version = 'dashboard') {
+  
+    $eqLogic=$this;
+    $replace = $eqLogic->preToHtml($_version);
+   
+		$version = jeedom::versionAlias($_version);
+  
+    if (!is_array($replace)) {return $replace; }
+     
+    $version_alias=jeedom::versionAlias($_version);
+  
+    if ($eqLogic->getDisplay('hideOn' . $version_alias) == 1) { return ''; }
+    $replace['#statusid#'] = $eqLogic->getCmd(null, 'status')->getId();
+    $replace['#status#'] = $eqLogic->getCmd(null, 'status')->execCmd();
+    $replace['#modèleid#'] = $eqLogic->getCmd(null, 'devicename')->getId();
+    $replace['#modèle#'] = $eqLogic->getCmd(null, 'devicename')->execCmd();
+    $replace['#modeid#'] = $eqLogic->getCmd(null, 'workmode')->getId();
+    $replace['#mode#'] = $eqLogic->getCmd(null, 'workmode')->execCmd();
+    $replace['#numéroid#'] = $eqLogic->getCmd(null, 'Msisdn')->getId();
+    $replace['#numéro#'] = $eqLogic->getCmd(null, 'Msisdn')->execCmd();
+    $replace['#reçuid#'] = $eqLogic->getCmd(null, 'LocalInbox')->getId();
+    $replace['#reçu#'] = $eqLogic->getCmd(null, 'LocalInbox')->execCmd();
+    $replace['#envoyéid#'] = $eqLogic->getCmd(null, 'LocalOutbox')->getId();
+    $replace['#envoyé#'] = $eqLogic->getCmd(null, 'LocalOutbox')->execCmd();
+    $replace['#restantsid#'] = $eqLogic->getCmd(null, 'RestLocalInbox')->getId();
+    $replace['#restants#'] = $eqLogic->getCmd(null, 'RestLocalInbox')->execCmd();
+    $replace['#reçu_txtid#'] = $eqLogic->getCmd(null, 'Messages')->getId();
+    $replace['#envoiid#'] = $eqLogic->getCmd(null, 'sendsms')->getId();
+    $replace['#supprimerid#'] = $eqLogic->getCmd(null, 'delsms')->getId();
+    $replace['#refreshsmsid#'] = $eqLogic->getCmd(null, 'refreshsms')->getId();
+    $replace['#rebootid#'] = $eqLogic->getCmd(null, 'reboot')->getId();
+    $sms_reçu=json_decode( $eqLogic->getCmd(null, 'Messages')->execCmd());
+    $sms_reçu_txt='';
+    foreach($sms_reçu as $sms){
+      
+      $StatutSMS;
+      if($sms->Smstat == '0') {
+          $StatutSMS = "Reçu";
+      }else{
+          $StatutSMS = "Envoyé";
+      }
+      $sms_reçu_txt .= '<textarea readonly=true class="input-sm message" style="height: 120px;" sms-id="'.$sms->Index.'">Statut : '.$StatutSMS.'&#10;Tel : '.$sms->Phone.'&#10;Date : '.$sms->Date.'&#10;'.$sms->Content.' </textarea>';
+      
+              
 
+    }
+    if($sms_reçu_txt == ''){
+      $sms_reçu_txt = '<textarea 
+      class="input-sm messages" 
+      style="height: 120px;" 
+      sms-id="null" readonly=true></textarea>';
+    }
+    $replace['#reçu_txt#'] = $sms_reçu_txt;
+    $replace['#réseauid#'] = $eqLogic->getCmd(null, 'FullName')->getId();
+    $replace['#réseau#'] = $eqLogic->getCmd(null, 'FullName')->execCmd();
+   // huawei_dongle::add_log("huawei_dongle","info",$replace);
+    $html= $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'huawei_dongle', __CLASS__)));
+   
+  
+   // cache::set('Huawei_dongle' . $_version . $this->getId(), $html, 0);
+		return $html;
+    
+ 
+  } 
 }
 
 class huawei_dongleCmd extends cmd {
@@ -605,13 +720,13 @@ class huawei_dongleCmd extends cmd {
     $eqLogic = $this->getEqLogic();
     switch ($this->getLogicalId()) {
       case "reboot":
-        log::add('huawei_dongle','debug','reboot ' . $this->getHumanName());
+         huawei_dongle::add_log('debug','reboot ' . $this->getHumanName());
         $eqLogic->reboot();
 
         break;
 
       case "sendsms":
-        log::add('huawei_dongle','debug','sendsms ' . $this->getHumanName());
+         huawei_dongle::add_log('debug','sendsms ' . $this->getHumanName());
         $return=$eqLogic->sendSMS($_options);
         $eqLogic->getSMSInfo();
         return $return;
@@ -619,25 +734,25 @@ class huawei_dongleCmd extends cmd {
         break;
 
       case "refresh":
-        log::add('huawei_dongle','debug','refresh ' . $this->getHumanName());
+         huawei_dongle::add_log('debug','refresh ' . $this->getHumanName());
        
         $eqLogic->getAllInfo();
         break;
 
       case "refreshsms":
-        log::add('huawei_dongle','debug','refreshsms ' . $this->getHumanName());
+         huawei_dongle::add_log('debug','refreshsms ' . $this->getHumanName());
         $eqLogic->getSMSInfo();
         break;
 
       case "delsms":
-        log::add('huawei_dongle','debug','delsms ' . $this->getHumanName());
+         huawei_dongle::add_log('debug','delsms ' . $this->getHumanName());
         $eqLogic->delSMS($_options);
-        $eqLogic->getSMSInfo();
+        //$eqLogic->getSMSInfo();
         break;
 
 
     }
-    ;
+    
     return true;
   }
 
@@ -676,16 +791,16 @@ class huawei_dongleRouter {
 		if(empty($state['State'])) {
 			if($state == 'down'){
 				$this->statut = "Down";
-				log::add('huawei_dongle', 'debug', 'Down - no data');
+				 huawei_dongle::add_log( 'debug', 'Down - no data');
 			}else if(intval($state['State']) == self::LOGGED_IN) {
 				$this->statut = "Up";
 			} else {
 				$this->statut = "Down";
-				log::add('huawei_dongle', 'debug', 'Down - no data');
+				 huawei_dongle::add_log( 'debug', 'Down - no data');
 			}
 		} else {
 			$this->statut = "Down";
-			log::add('huawei_dongle', 'debug', 'Down');
+			 huawei_dongle::add_log( 'debug', 'Down');
 		}
 		
 		return $this->statut;
@@ -721,7 +836,7 @@ class huawei_dongleRouter {
 	}
 	
 	private function setInfo($out) {
-		//log::add('huawei_dongle', 'debug', 'Output: '.$out);
+		// huawei_dongle::add_log( 'debug', 'Output: '.$out);
 		
 		// removing Python bracket list
 		$tmp = substr(trim($out), 2, -2);
@@ -738,30 +853,30 @@ class huawei_dongleRouter {
 						
 			$this->output[$key] = str_replace("\\'", "'", $this->output[$key]);
 			$this->output[$key] = str_replace(array("\r\n", "\n", "\r"), "", $this->output[$key]);
-			//log::add('huawei_dongle', 'debug', $key.': '.$this->output[$key]);
+			// huawei_dongle::add_log( 'debug', $key.': '.$this->output[$key]);
 			$this->output[$key] = json_decode($this->output[$key], true);
 			
 			switch (json_last_error()) {
 				case JSON_ERROR_NONE:
-					//log::add('huawei_dongle', 'debug', ' - Aucune erreur');
+					// huawei_dongle::add_log( 'debug', ' - Aucune erreur');
 				break;
 				case JSON_ERROR_DEPTH:
-					log::add('huawei_dongle', 'debug', ' - Profondeur maximale atteinte');
+					 huawei_dongle::add_log( 'debug', ' - Profondeur maximale atteinte');
 				break;
 				case JSON_ERROR_STATE_MISMATCH:
-					log::add('huawei_dongle', 'debug', ' - Inadéquation des modes ou underflow');
+					 huawei_dongle::add_log( 'debug', ' - Inadéquation des modes ou underflow');
 				break;
 				case JSON_ERROR_CTRL_CHAR:
-					log::add('huawei_dongle', 'debug', ' - Erreur lors du contrôle des caractères');
+					 huawei_dongle::add_log( 'debug', ' - Erreur lors du contrôle des caractères');
 				break;
 				case JSON_ERROR_SYNTAX:
-					log::add('huawei_dongle', 'debug', ' - Erreur de syntaxe ; JSON malformé');
+					 huawei_dongle::add_log( 'debug', ' - Erreur de syntaxe ; JSON malformé');
 				break;
 				case JSON_ERROR_UTF8:
-					log::add('huawei_dongle', 'debug', ' - Caractères UTF-8 malformés, probablement une erreur d\'encodage');
+					 huawei_dongle::add_log( 'debug', ' - Caractères UTF-8 malformés, probablement une erreur d\'encodage');
 				break;
 				default:
-					log::add('huawei_dongle', 'debug', ' - Erreur inconnue');
+					 huawei_dongle::add_log( 'debug', ' - Erreur inconnue');
 				break;
 			}
 		}
@@ -774,10 +889,10 @@ class huawei_dongleRouter {
     $data = !endsWith('}', $data) ? $data.'}' : $data;
     $data = preg_replace('!,(\s*[}\]])!U', '$1', $data);
     return $data;
-}
+  }
 	private function startsWith($needle, $haystack) {
     return !strncmp($haystack, $needle, strlen($needle));
-}
+  }
  
   private function endsWith($needle, $haystack) {
       $length = strlen($needle);
@@ -786,7 +901,7 @@ class huawei_dongleRouter {
       return (substr($haystack, -$length) === $needle);
   }
 	private function setInfoSMS($out) {
-		//log::add('huawei_dongle', 'debug', 'PreOutputSMS: '.$out);
+		// huawei_dongle::add_log( 'debug', 'PreOutputSMS: '.$out);
 		
 		// removing Python bracket list
 		$tmp = substr(trim($out), 2, -2);
@@ -808,31 +923,31 @@ class huawei_dongleRouter {
           $this->outputSMS[$key] = str_replace("\'", "'", $this->outputSMS[$key]);
            $this->outputSMS[$key] = str_replace('\\"', "'", $this->outputSMS[$key]);
           $this->outputSMS[$key] = str_replace("\\'", "", $this->outputSMS[$key]);
-			log::add('huawei_dongle', 'debug', $key.': '.$this->outputSMS[$key]);
+			 huawei_dongle::add_log( 'debug', $key.': '.$this->outputSMS[$key]);
             $this->outputSMS[$key] = json_decode($this->outputSMS[$key],true);
           	//var_dump($out);
 			switch (json_last_error()) {
 				case JSON_ERROR_NONE:
-					//log::add('huawei_dongle', 'debug', ' - Aucune erreur');
+					// huawei_dongle::add_log( 'debug', ' - Aucune erreur');
 				break;
 				case JSON_ERROR_DEPTH:
-					log::add('huawei_dongle', 'debug', ' - Profondeur maximale atteinte');
+					 huawei_dongle::add_log( 'debug', ' - Profondeur maximale atteinte');
 				break;
 				case JSON_ERROR_STATE_MISMATCH:
-					log::add('huawei_dongle', 'debug', ' - Inadéquation des modes ou underflow');
+					 huawei_dongle::add_log( 'debug', ' - Inadéquation des modes ou underflow');
 				break;
 				case JSON_ERROR_CTRL_CHAR:
-					log::add('huawei_dongle', 'debug', ' - Erreur lors du contrôle des caractères');
+					 huawei_dongle::add_log( 'debug', ' - Erreur lors du contrôle des caractères');
 				break;
 				case JSON_ERROR_SYNTAX:
-					log::add('huawei_dongle', 'debug', ' - Erreur de syntaxe ; JSON malformé');
-                	log::add('huawei_dongle', 'debug', $key.': '.$this->outputSMS[$key]);
+					 huawei_dongle::add_log( 'debug', ' - Erreur de syntaxe ; JSON malformé');
+                	 huawei_dongle::add_log( 'debug', $key.': '.$this->outputSMS[$key]);
 				break;
 				case JSON_ERROR_UTF8:
-					log::add('huawei_dongle', 'debug', ' - Caractères UTF-8 malformés, probablement une erreur d\'encodage');
+					 huawei_dongle::add_log( 'debug', ' - Caractères UTF-8 malformés, probablement une erreur d\'encodage');
 				break;
 				default:
-					log::add('huawei_dongle', 'debug', ' - Erreur inconnue');
+					 huawei_dongle::add_log( 'debug', ' - Erreur inconnue');
 				break;
 			}
 		}
@@ -844,9 +959,9 @@ class huawei_dongleRouter {
 		try{
 			$json = shell_exec('python3 '.$command);
 		} catch (Exception $e){
-			log::add('huawei_dongle', 'debug', $e);
+			 huawei_dongle::add_log( 'debug', $e);
 		}
-		log::add('huawei_dongle', 'debug', $json);
+		 huawei_dongle::add_log( 'debug', $json);
 		return $json;		
 	}
 	
@@ -857,9 +972,9 @@ class huawei_dongleRouter {
 		try{
 			$json = shell_exec('python3 '.$command);
 		} catch (Exception $e){
-			log::add('huawei_dongle', 'debug', $e);
+			 huawei_dongle::add_log( 'debug', $e);
 		}
-		//log::add('huawei_dongle', 'debug', $json);
+		// huawei_dongle::add_log( 'debug', $json);
       return $json;
 		//return json_decode($json, true);		
 	}
@@ -870,9 +985,9 @@ class huawei_dongleRouter {
          
 			$json = shell_exec('python3 '.$command);
 		} catch (Exception $e){
-			log::add('huawei_dongle', 'debug', $e);
+			 huawei_dongle::add_log( 'debug', $e);
 		}
-		log::add('huawei_dongle', 'debug', $json);
+		 huawei_dongle::add_log( 'debug', $json);
 		return $json;		
 	}
 	
@@ -881,9 +996,9 @@ class huawei_dongleRouter {
 		try{
 			$json = shell_exec('python3 '.$command);
 		} catch (Exception $e){
-			log::add('huawei_dongle', 'debug', $e);
+			 huawei_dongle::add_log( 'debug', $e);
 		}
-		log::add('huawei_dongle', 'debug', $json);
+		 huawei_dongle::add_log( 'debug', $json);
 		return json_decode($json, true);		
 	}
 	
@@ -893,9 +1008,9 @@ class huawei_dongleRouter {
 		try{
 			$json = shell_exec('python3 '.$command);
 		} catch (Exception $e){
-			log::add('huawei_dongle', 'debug', $e);
+			 huawei_dongle::add_log( 'debug', $e);
 		}
-		log::add('huawei_dongle', 'debug', $json);
+		 huawei_dongle::add_log( 'debug', $json);
 		return json_decode($json, true);		
 	}
 	

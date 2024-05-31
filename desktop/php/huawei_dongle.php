@@ -119,22 +119,8 @@ foreach (jeedom::getConfiguration('eqLogic:category') as $key => $value) {
 								<div class="col-sm-3">
 									<input type="password" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="password" />
 								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">{{Fréquence de Récupération}}</label>
-								<div class="col-sm-3">
-									<select class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="frequence" >
-										<option value="5">5 minutes</option>
-										<option value="15" selected>15 minutes</option>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">{{SMS en mode texte}}</label>
-								<div class="col-sm-3">
-									<input type="checkbox" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="texteMode" />{{Activer}}
-								</div>
-							</div>
+							</div>							
+							
 						</div>
 					</div>
 				</fieldset>
@@ -145,7 +131,8 @@ foreach (jeedom::getConfiguration('eqLogic:category') as $key => $value) {
 				<table id="table_cmd" class="table table-bordered table-condensed">
 					<thead>
 						<tr>
-							<th>{{Nom}}</th><th>{{Type}}</th><th>Unité</th><th>Paramètres</th><th>{{Action}}</th>
+							<th width="20%">{{Nom}}</th><th>{{Type}}</th><th width="35%" align="center">{{Etat}}</th><th width="15%" align="right">{{Options}}</th><th width="20%" align="right">{{Actions}}</th>	
+							
 						</tr>
 					</thead>
 					<tbody>
