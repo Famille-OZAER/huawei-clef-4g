@@ -118,7 +118,7 @@ class huawei_dongle extends eqLogic {
       throw new Exception(__('Le champs Mot de passe ne peut pas être vide', __FILE__));
     }
   }
-  public  function ping($ip) {
+  private function ping($ip) {
 		$ping = "NOK";
 		$exec_string = 'sudo ping -n -c 1 -t 255 ' . $ip;
 		exec($exec_string, $output, $return);
@@ -303,17 +303,16 @@ class huawei_dongle extends eqLogic {
     $IPaddress = $this->getConfiguration('ip');
     $login = $this->getConfiguration('username');
     $pwd = $this->getConfiguration('password');
-    $texteMode = $this->getConfiguration('texteMode');
+   
 
     // setting the huawei_dongleRouter session
     $huawei_dongleRouter = new huawei_dongleRouter();
     $huawei_dongleRouter->setIP($IPaddress);
     try {
-      if($texteMode == 1) {
-        $messageSMS = $this->cleanSMS($arr['message']);
-      } else {
-        $messageSMS = $arr['message'];
-      }
+      
+       
+      $messageSMS = $arr['message'];
+     
       $huawei_dongleRouter->setSession($login, $pwd, "");
       $numero_tel="Vide";
       if(isset($arr['numerotel'])) {
@@ -389,20 +388,23 @@ class huawei_dongle extends eqLogic {
 
         $value = $this->infos[$cle];
         if($cle == "Messages"){
-
+          $cle= "SMS";
           if(strpos($value, '[')=== FALSE) {
             $value = "[" .  $value. "]";
           }
         }
 
-
+        
         $cmd=cmd::byEqLogicIdAndLogicalId($eqLogic->getId(), $cle);
         if (is_object($cmd)){
 
           
           if($cmd->execCmd()!=$value && $value !=''){
+            if($cle== "Messages") {             
+              $value = 'test';
+            }
 
-             huawei_dongle::add_log( 'info', 'MAJ '.$cle . ': '.$value);
+            huawei_dongle::add_log( 'info', 'MAJ '.$cle . ': '.$value);
           }
           $this->checkAndUpdateCmd($cmd, $value);
         }
@@ -568,13 +570,13 @@ class huawei_dongle extends eqLogic {
       $RouteurCmd->setOrder('16');
       $RouteurCmd->save();
     }
-    $RouteurCmd = $this->getCmd(null, 'Messages');
+    $RouteurCmd = $this->getCmd(null, 'SMS');
     if (!is_object($RouteurCmd)) {
-       huawei_dongle::add_log( 'debug', 'Messages');
+       huawei_dongle::add_log( 'debug', 'SMS');
       $RouteurCmd = new cmd();
       $RouteurCmd->setName(__('SMS', __FILE__));
       $RouteurCmd->setEqLogic_id($this->getId());
-      $RouteurCmd->setLogicalId('Messages');
+      $RouteurCmd->setLogicalId('SMS');
       $RouteurCmd->setType('info');
       $RouteurCmd->setSubType('string');
       $RouteurCmd->setOrder('17');
@@ -603,7 +605,7 @@ class huawei_dongle extends eqLogic {
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('sendsms');
       $RouteurCmd->setType('action');
-      $RouteurCmd->setTemplate('dashboard','huawei_dongle-sendsms');
+      $RouteurCmd->setSubType('other');
       $RouteurCmd->setOrder('21');
       $RouteurCmd->save();
     }
@@ -658,12 +660,12 @@ class huawei_dongle extends eqLogic {
     $replace['#envoyé#'] = $eqLogic->getCmd(null, 'LocalOutbox')->execCmd();
     $replace['#restantsid#'] = $eqLogic->getCmd(null, 'RestLocalInbox')->getId();
     $replace['#restants#'] = $eqLogic->getCmd(null, 'RestLocalInbox')->execCmd();
-    $replace['#reçu_txtid#'] = $eqLogic->getCmd(null, 'Messages')->getId();
+    $replace['#reçu_txtid#'] = $eqLogic->getCmd(null, 'SMS')->getId();
     $replace['#envoiid#'] = $eqLogic->getCmd(null, 'sendsms')->getId();
     $replace['#supprimerid#'] = $eqLogic->getCmd(null, 'delsms')->getId();
     $replace['#refreshsmsid#'] = $eqLogic->getCmd(null, 'refreshsms')->getId();
     $replace['#rebootid#'] = $eqLogic->getCmd(null, 'reboot')->getId();
-    $sms_reçu=json_decode( $eqLogic->getCmd(null, 'Messages')->execCmd());
+    $sms_reçu=json_decode( $eqLogic->getCmd(null, 'SMS')->execCmd());
     $sms_reçu_txt='';
     foreach($sms_reçu as $sms){
       

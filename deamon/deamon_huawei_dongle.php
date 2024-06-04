@@ -30,8 +30,8 @@ function deamon1(){
         if(!$eqLogic->getIsEnable()){
             continue;
         }
-        huawei_dongle::getAllInfo( $eqLogic);
-        sleep(60);
+        huawei_dongle::getAllInfo($eqLogic);
+        sleep(10);
         }
     }   
 }
