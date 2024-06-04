@@ -605,7 +605,7 @@ class huawei_dongle extends eqLogic {
       $RouteurCmd->setEqLogic_id($this->getId());
       $RouteurCmd->setLogicalId('sendsms');
       $RouteurCmd->setType('action');
-      $RouteurCmd->setSubType('other');
+      $RouteurCmd->setSubType('message');
       $RouteurCmd->setOrder('21');
       $RouteurCmd->save();
     }
